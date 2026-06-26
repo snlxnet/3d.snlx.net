@@ -1,71 +1,63 @@
-import * as THREE from 'three'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const model = "pocket-kb.glb";
+const scale = 0.15;
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 1, 10000)
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight)
-renderer.setPixelRatio(window.devicePixelRatio)
-document.body.appendChild(renderer.domElement)
+scene.background = new THREE.Color(0xcdd6f4);
 
-const color = 0xffffff;
-const intensity = 2.2;
-const light = new THREE.AmbientLight(color, intensity);
-scene.add(light);
-
-scene.background = new THREE.Color(0xcdd6f4)
-const controls = new OrbitControls(camera, renderer.domElement)
-camera.position.set(1047, 684, -442)
-camera.rotation.set(-3, 0, 2)
-const initZ = camera.rotation.z
-controls.update()
-controls.autoRotate = true
-controls.autoRotateSpeed = -0.3
-
-const loader = new GLTFLoader()
-let objects = []
-loader.load('pocket-kb.glb', (gltf) => {
-  objects = gltf.scene.children
-  console.log('loaded', gltf.scene)
-  scene.add(gltf.scene)
-}, undefined, console.error)
-
+const view = new THREE.WebGLRenderer({ antialias: true });
+view.setSize(window.innerWidth, window.innerHeight);
+view.setPixelRatio(window.devicePixelRatio);
+view.setAnimationLoop(animate);
 function animate(time) {
-  controls.update()
-  renderer.render(scene, camera)
+  controls.update();
+  view.render(scene, cam);
 }
-renderer.setAnimationLoop(animate)
 
-document.addEventListener("keypress", (event) => {
-  if (event.key !== " ") {
-    return
-  }
+const FOV = 54; // the lens is around 35mm
+const CLIP_NEAR = 1;
+const CLIP_FAR = 10_000;
+const cam = new THREE.PerspectiveCamera(
+  FOV,
+  window.innerWidth / window.innerHeight,
+  CLIP_NEAR,
+  CLIP_FAR,
+);
+const controls = new OrbitControls(cam, view.domElement);
+cam.position.set(1047 * scale, 684 * scale, -442 * scale);
+cam.rotation.set(-3, 0, 2);
+controls.autoRotate = true;
+controls.autoRotateSpeed = -0.3;
+document.addEventListener("mousedown", () => (controls.autoRotate = false));
+document.addEventListener("touchstart", () => (controls.autoRotate = false));
 
-  const code = `camera.position.set(${fmt(camera.position)})\ncamera.rotation.set(${fmt(camera.rotation)})`
-
-  navigator.clipboard.writeText(code)
-  console.log("Coordinates of the camera copied")
-})
-
-document.addEventListener("mousedown", () => controls.autoRotate = false)
-document.addEventListener("touchstart", () => controls.autoRotate = false)
-
-function fmt(vector) {
-  return [vector.x, vector.y, vector.z]
-    .map(axis => Math.floor(axis))
-    .join(", ")
-}
+const loader = new GLTFLoader();
+const message = document.getElementById("loading");
+loader.load(
+  model,
+  (gltf) => {
+    message.remove();
+    scene.add(gltf.scene);
+    document.body.appendChild(view.domElement);
+  },
+  undefined,
+  (why) => {
+    message.textContent = "Error (see browser console)";
+    console.error(why);
+  },
+);
 
 window.addEventListener("resize", () => {
-  const canvas = renderer.domElement;
+  const canvas = view.domElement;
   const width = window.innerWidth;
   const height = window.innerHeight;
   const needResize = canvas.width !== width || canvas.height !== height;
   if (needResize) {
-    camera.aspect = width / height;
-    renderer.setSize(width, height);
-    camera.updateProjectionMatrix();
+    cam.aspect = width / height;
+    view.setSize(width, height);
+    cam.updateProjectionMatrix();
   }
-  console.log(needResize, {width, height})
-})
+});
