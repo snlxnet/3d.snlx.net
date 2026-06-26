@@ -2,8 +2,9 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-const model = "pocket-kb.glb";
-const scale = 0.15;
+const params = new URLSearchParams(window.location.search);
+const model = params.get("model") || "examples/cube.glb";
+const scale = +(params.get("scale") || "0.08");
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xcdd6f4);
@@ -28,7 +29,6 @@ const cam = new THREE.PerspectiveCamera(
 );
 const controls = new OrbitControls(cam, view.domElement);
 cam.position.set(1047 * scale, 684 * scale, -442 * scale);
-cam.rotation.set(-3, 0, 2);
 controls.autoRotate = true;
 controls.autoRotateSpeed = -0.3;
 document.addEventListener("mousedown", () => (controls.autoRotate = false));
@@ -46,6 +46,7 @@ loader.load(
   undefined,
   (why) => {
     message.textContent = "Error (see browser console)";
+    document.body.style.background = "#eba0ac";
     console.error(why);
   },
 );
