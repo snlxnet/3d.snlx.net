@@ -14,7 +14,7 @@ const intensity = 2.2;
 const light = new THREE.AmbientLight(color, intensity);
 scene.add(light);
 
-scene.background = new THREE.Color(0x181825)
+scene.background = new THREE.Color(0xcdd6f4)
 const controls = new OrbitControls(camera, renderer.domElement)
 camera.position.set(1047, 684, -442)
 camera.rotation.set(-3, 0, 2)
@@ -25,7 +25,7 @@ controls.autoRotateSpeed = -0.3
 
 const loader = new GLTFLoader()
 let objects = []
-loader.load('imrk.glb', (gltf) => {
+loader.load('pocket-kb.glb', (gltf) => {
   objects = gltf.scene.children
   console.log('loaded', gltf.scene)
   scene.add(gltf.scene)
