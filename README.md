@@ -1,5 +1,7 @@
 The 3D viewer for my site
 
+See https://3d.snlx.net/example
+
 ## Embedding
 
 The viewer has 2 parameters:

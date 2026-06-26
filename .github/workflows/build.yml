@@ -23,6 +23,7 @@ jobs:
           npm install
           npx vite build
           cp -r examples dist/
+          cp example.html dist/
       - name: upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
