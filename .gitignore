@@ -11,3 +11,4 @@ devenv.local.yaml
 
 # black holes
 node_modules
+dist
