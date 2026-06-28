@@ -5,6 +5,7 @@
     <title>3D viewer | snlx.net</title>
     <style>
       body {
+        height: 100dvh;
         margin: 0;
         display: flex;
         justify-content: center;
@@ -15,10 +16,26 @@
         color: #1e1e2e;
         transition: 1s background;
       }
+      #loading {
+        z-index: 10;
+        transition: 0.3s;
+      }
+      img {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+      .hidden {
+        opacity: 0;
+      }
     </style>
   </head>
   <body>
-    <span id="loading">Loading...</span>
+    <div id="loading">
+      <img src="/gears.svg">
+    </div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>

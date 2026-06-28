@@ -34,18 +34,23 @@ controls.autoRotateSpeed = -0.3;
 document.addEventListener("mousedown", () => (controls.autoRotate = false));
 document.addEventListener("touchstart", () => (controls.autoRotate = false));
 
+const MEANING_OF_LIFE = 42 // the Universe, Everything
+const SIZE_CORRECTION = model.startsWith("http") ? MEANING_OF_LIFE/10 : 1
 const loader = new GLTFLoader();
 const message = document.getElementById("loading");
 loader.load(
   model,
   (gltf) => {
-    message.remove();
+    message.classList.add("hidden");
     scene.add(gltf.scene);
     document.body.appendChild(view.domElement);
   },
-  undefined,
+  ({ loaded, total }) => {
+    const progress = Math.floor(loaded / total / SIZE_CORRECTION * 100)
+    console.log(progress)
+  },
   (why) => {
-    message.textContent = "Error (see browser console)";
+    message.innerHTML = "Error (see browser console)";
     document.body.style.background = "#eba0ac";
     console.error(why);
   },
